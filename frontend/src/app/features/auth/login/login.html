@@ -1,0 +1,37 @@
+﻿<div class="auth-page">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>Reconciliation App</mat-card-title>
+      <mat-card-subtitle>Sign in to reconcile your ledger and bank statement</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" autocomplete="username" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="password" autocomplete="current-password" />
+        </mat-form-field>
+
+        @if (errorMessage(); as error) {
+          <p class="error-text">{{ error }}</p>
+        }
+
+        <button mat-flat-button color="primary" class="full-width submit-btn" type="submit" [disabled]="form.invalid || loading()">
+          @if (loading()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            Login
+          }
+        </button>
+      </form>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <span>Don&apos;t have an account?</span>
+      <a mat-button routerLink="/register">Register</a>
+    </mat-card-actions>
+  </mat-card>
+</div>

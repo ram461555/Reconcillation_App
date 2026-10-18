@@ -1,0 +1,51 @@
+﻿.ledger-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-card {
+  max-width: 900px;
+}
+
+.entry-form {
+  display: grid;
+  grid-template-columns: 160px 1fr 160px 160px;
+  gap: 12px;
+  align-items: start;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.desc-field {
+  grid-column: span 1;
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+}
+
+.center-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.empty-text {
+  color: #607d8b;
+  text-align: center;
+  padding: 24px;
+}
+
+.entries-table {
+  width: 100%;
+  max-width: 900px;
+}
+
+.error-text {
+  color: #c62828;
+}

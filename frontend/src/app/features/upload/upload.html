@@ -1,0 +1,106 @@
+﻿<div class="upload-page">
+  <mat-card class="upload-card">
+    <mat-card-header>
+      <mat-card-title>Upload files</mat-card-title>
+      <mat-card-subtitle>Upload your ledger and one or more bank statement PDFs, then set matching tolerances</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="ledger-source-row">
+        <mat-slide-toggle [checked]="useManualLedger()" (change)="toggleManualLedger($event.checked)">
+          Use my saved ledger entries instead of uploading a PDF
+        </mat-slide-toggle>
+        @if (useManualLedger()) {
+          <a routerLink="/ledger" class="manage-link">Manage ledger entries</a>
+        }
+      </div>
+
+      <div class="dropzones">
+        @if (!useManualLedger()) {
+          <div class="dropzone-slot">
+            <span class="slot-label">Ledger</span>
+            <app-file-drop label="Drag ledger PDF here or click to browse" (fileSelected)="ledgerFile.set($event)" />
+          </div>
+        }
+        @for (index of bankFileSlots(); track index) {
+          <div class="dropzone-slot">
+            <span class="slot-label">
+              Bank statement {{ bankFileSlots().length > 1 ? index + 1 : '' }}
+              @if (bankFileSlots().length > 1) {
+                <button type="button" class="remove-slot-btn" (click)="removeBankSlot(index)" aria-label="Remove bank statement">&times;</button>
+              }
+            </span>
+            <app-file-drop label="Drag bank statement PDF here or click to browse" (fileSelected)="setBankFile(index, $event)" />
+          </div>
+        }
+      </div>
+
+      @if (bankFileSlots().length < maxBankFiles) {
+        <button mat-button type="button" class="add-bank-btn" (click)="addBankSlot()">
+          <mat-icon>add</mat-icon>
+          Add another bank statement (up to {{ maxBankFiles }} - e.g. multiple bank accounts for the same client)
+        </button>
+      }
+
+      <form [formGroup]="form" class="tolerance-form">
+        <h3>Tolerance settings</h3>
+
+        <mat-button-toggle-group formControlName="toleranceType" class="full-width">
+          <mat-button-toggle value="absolute">Absolute (₹)</mat-button-toggle>
+          <mat-button-toggle value="percentage">Percentage (%)</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <div class="tolerance-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Date window (± days)</mat-label>
+            <input matInput type="number" formControlName="dateToleranceDays" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>
+              @if (form.controls.toleranceType.value === 'percentage') {
+                Amount tolerance (%)
+              } @else {
+                Amount tolerance (₹)
+              }
+            </mat-label>
+            <input matInput type="number" formControlName="amountTolerance" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Description match threshold (%)</mat-label>
+            <input matInput type="number" formControlName="descriptionThreshold" />
+          </mat-form-field>
+        </div>
+      </form>
+
+      @if (stage() === 'error' && errorMessage()) {
+        <p class="error-text">
+          <mat-icon>error_outline</mat-icon>
+          {{ errorMessage() }}
+        </p>
+      }
+
+      <button
+        mat-flat-button
+        color="primary"
+        class="start-btn"
+        [disabled]="!canSubmit"
+        (click)="submit()"
+      >
+        @if (submitting()) {
+          Processing…
+        } @else {
+          Start reconciliation
+        }
+      </button>
+
+      @if (submitting()) {
+        <div class="progress-block">
+          <mat-progress-bar mode="determinate" [value]="progressPct()"></mat-progress-bar>
+          <p class="progress-label">{{ progressPct() }}% — {{ stage() === 'uploading' ? 'Uploading files…' : 'Extracting, matching and flagging transactions…' }}</p>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

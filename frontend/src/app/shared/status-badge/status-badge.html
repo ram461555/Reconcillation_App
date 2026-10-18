@@ -1,0 +1,4 @@
+﻿<span class="status-chip {{ cssClass() }}">{{ status() }}</span>
+@if (isDuplicate()) {
+  <mat-icon class="duplicate-icon" matTooltip="Duplicate record">content_copy</mat-icon>
+}

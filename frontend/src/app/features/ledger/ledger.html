@@ -1,0 +1,85 @@
+﻿<div class="ledger-page">
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Ledger Management</mat-card-title>
+      <mat-card-subtitle>Add or edit ledger entries by hand, without needing a PDF or Excel</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="entry-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Date</mat-label>
+          <input matInput type="date" formControlName="txn_date" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="desc-field">
+          <mat-label>Description</mat-label>
+          <input matInput formControlName="description" placeholder="e.g. Rent - Shah Properties" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Amount (Rs.)</mat-label>
+          <input matInput formControlName="amount" placeholder="25000.00" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ref / voucher no. (optional)</mat-label>
+          <input matInput formControlName="ref_no" />
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving()">
+            {{ editingId() ? 'Save changes' : 'Add entry' }}
+          </button>
+          @if (editingId()) {
+            <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
+          }
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (loading()) {
+    <div class="center-spinner"><mat-spinner></mat-spinner></div>
+  } @else if (errorMessage()) {
+    <p class="error-text">{{ errorMessage() }}</p>
+  } @else if (entries().length === 0) {
+    <p class="empty-text">No ledger entries yet. Add your first entry above.</p>
+  } @else {
+    <table mat-table [dataSource]="entries()" class="entries-table">
+      <ng-container matColumnDef="txn_date">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let row">{{ row.txn_date }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <td mat-cell *matCellDef="let row">{{ row.description }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>Amount</th>
+        <td mat-cell *matCellDef="let row">{{ row.amount }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="ref_no">
+        <th mat-header-cell *matHeaderCellDef>Ref no.</th>
+        <td mat-cell *matCellDef="let row">{{ row.ref_no }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button (click)="edit(row)" aria-label="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="remove(row)" aria-label="Delete">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  }
+</div>

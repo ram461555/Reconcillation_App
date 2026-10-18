@@ -1,0 +1,88 @@
+﻿.history-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.center-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+
+.empty-card {
+  padding: 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.history-table {
+  width: 100%;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.error-text {
+  color: #c62828;
+  padding: 24px;
+  text-align: center;
+}
+
+.search-panel {
+  .search-form {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px 16px;
+    padding-top: 8px;
+
+    @media (max-width: 720px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .search-checkboxes {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .search-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .result-count {
+    font-size: 0.85rem;
+    color: #607d8b;
+    margin: 12px 0 4px;
+  }
+
+  .search-results-table {
+    width: 100%;
+  }
+
+  .empty-text {
+    color: #607d8b;
+    padding: 16px 0;
+  }
+}

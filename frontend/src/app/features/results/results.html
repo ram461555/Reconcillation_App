@@ -1,0 +1,152 @@
+﻿<div class="results-page">
+  @if (loading()) {
+    <div class="center-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else if (errorMessage()) {
+    <p class="error-text">{{ errorMessage() }}</p>
+  } @else {
+    @if (summary(); as s) {
+      <div class="summary-cards">
+        <mat-card class="stat-card matched">
+          <span class="stat-value">{{ s.matched }}</span>
+          <span class="stat-label">Matched</span>
+        </mat-card>
+        <mat-card class="stat-card partial">
+          <span class="stat-value">{{ s.partial }}</span>
+          <span class="stat-label">Partial</span>
+        </mat-card>
+        <mat-card class="stat-card unmatched">
+          <span class="stat-value">{{ s.unmatched }}</span>
+          <span class="stat-label">Unmatched</span>
+        </mat-card>
+        <mat-card class="stat-card total">
+          <span class="stat-value">{{ s.total }}</span>
+          <span class="stat-label">Total</span>
+        </mat-card>
+      </div>
+    }
+
+    <div class="toolbar-row">
+      <mat-chip-listbox aria-label="Status filter">
+        <mat-chip-option (click)="setFilter('all')" [selected]="activeFilter() === 'all'">All</mat-chip-option>
+        <mat-chip-option (click)="setFilter('Matched')" [selected]="activeFilter() === 'Matched'">Matched</mat-chip-option>
+        <mat-chip-option (click)="setFilter('Partial')" [selected]="activeFilter() === 'Partial'">Partial</mat-chip-option>
+        <mat-chip-option (click)="setFilter('Missing')" [selected]="activeFilter() === 'Missing'">Missing</mat-chip-option>
+      </mat-chip-listbox>
+
+      <div class="spacer"></div>
+
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Search description or reason..."
+        (input)="onSearch($any($event.target).value)"
+      />
+
+      <a mat-flat-button color="primary" [href]="exportUrl()" target="_blank">
+        <mat-icon>picture_as_pdf</mat-icon>
+        Export PDF
+      </a>
+    </div>
+
+    <mat-expansion-panel class="advanced-filters">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Advanced search</mat-panel-title>
+        <mat-panel-description>
+          @if (hasAdvancedFilters()) {
+            Filters active
+          } @else {
+            Amount/date difference, duplicates, tolerance, date range
+          }
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="advanced-filters-grid">
+        <label class="filter-field">
+          Amount difference &gt;= (Rs.)
+          <input type="number" min="0" placeholder="e.g. 2000" (input)="setAmountDiffMin($any($event.target).value)" />
+        </label>
+
+        <label class="filter-field">
+          Date difference &gt;= (days)
+          <input type="number" min="0" placeholder="e.g. 3" (input)="setDateDiffMin($any($event.target).value)" />
+        </label>
+
+        <label class="filter-field">
+          Transaction date from
+          <input type="date" (input)="setDateFrom($any($event.target).value)" />
+        </label>
+
+        <label class="filter-field">
+          Transaction date to
+          <input type="date" (input)="setDateTo($any($event.target).value)" />
+        </label>
+
+        <mat-checkbox (change)="toggleDuplicatesOnly($event.checked)">Duplicates only</mat-checkbox>
+        <mat-checkbox (change)="toggleToleranceOnly($event.checked)">Tolerance matches only</mat-checkbox>
+      </div>
+
+      @if (hasAdvancedFilters()) {
+        <button mat-button (click)="clearAdvancedFilters()">Clear advanced filters</button>
+      }
+    </mat-expansion-panel>
+
+    <table mat-table [dataSource]="pagedItems()" class="results-table">
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let row">{{ row.date }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="ledger">
+        <th mat-header-cell *matHeaderCellDef>Ledger</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="cell-desc">{{ row.ledger_description ?? '—' }}</div>
+          <div class="cell-amount">{{ row.ledger_amount ?? '—' }}</div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="bank">
+        <th mat-header-cell *matHeaderCellDef>Bank</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="cell-desc">{{ row.bank_narration ?? '—' }}</div>
+          <div class="cell-amount">{{ row.bank_amount ?? '—' }}</div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let row">
+          <app-status-badge [status]="row.match_status" [isDuplicate]="row.is_duplicate" />
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="reason">
+        <th mat-header-cell *matHeaderCellDef>Reason</th>
+        <td mat-cell *matCellDef="let row">{{ row.reason }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="similarity">
+        <th mat-header-cell *matHeaderCellDef>Sim %</th>
+        <td mat-cell *matCellDef="let row">{{ row.similarity_score !== null ? (row.similarity_score | number: '1.0-0') : '—' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        [class.row-matched]="row.match_status.startsWith('Matched')"
+        [class.row-partial]="row.match_status === 'Partial'"
+        [class.row-missing]="row.match_status === 'Missing'"
+      ></tr>
+    </table>
+
+    <mat-paginator
+      [length]="filteredItems().length"
+      [pageSize]="pageSize()"
+      [pageIndex]="page()"
+      [pageSizeOptions]="[10, 25, 50, 100]"
+      (page)="onPage($event)"
+    ></mat-paginator>
+  }
+</div>

@@ -1,0 +1,15 @@
+﻿<mat-toolbar color="primary" class="app-toolbar">
+  <span class="brand">Reconciliation App</span>
+  <span class="spacer"></span>
+  @if (auth.isAuthenticated()) {
+    <a mat-button routerLink="/upload" routerLinkActive="active-link">Reconcile</a>
+    <a mat-button routerLink="/ledger" routerLinkActive="active-link">Ledger</a>
+    <a mat-button routerLink="/history" routerLinkActive="active-link">History</a>
+    <span class="username">{{ auth.currentUser()?.username }}</span>
+    <button mat-button (click)="logout()">Logout</button>
+  }
+</mat-toolbar>
+
+<main class="app-main">
+  <router-outlet />
+</main>

@@ -1,0 +1,35 @@
+﻿:host {
+  display: block;
+  height: 100%;
+}
+
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  .brand {
+    font-weight: 600;
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .username {
+    margin-right: 0.5rem;
+    opacity: 0.85;
+    font-size: 0.9rem;
+  }
+
+  .active-link {
+    text-decoration: underline;
+  }
+}
+
+.app-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}

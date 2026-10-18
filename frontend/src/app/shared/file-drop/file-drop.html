@@ -1,0 +1,29 @@
+﻿<div
+  class="dropzone"
+  [class.drag-over]="dragOver()"
+  [class.has-file]="selectedFile()"
+  [class.has-error]="errorMessage()"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave()"
+  (drop)="onDrop($event)"
+  (click)="fileInput.click()"
+>
+  <input #fileInput type="file" accept="application/pdf,.pdf" hidden (change)="onFileInputChange($event)" />
+
+  @if (!selectedFile() && !errorMessage()) {
+    <mat-icon>upload_file</mat-icon>
+    <p class="hint">{{ label() }}</p>
+  }
+
+  @if (selectedFile(); as file) {
+    <div class="file-info">
+      <span class="file-name">{{ file.name }}</span>
+      <span class="file-size">{{ formatSize(file.size) }}</span>
+      <button type="button" class="clear-btn" (click)="clear(); $event.stopPropagation()">&times;</button>
+    </div>
+  }
+
+  @if (errorMessage(); as error) {
+    <p class="error-text">{{ error }}</p>
+  }
+</div>

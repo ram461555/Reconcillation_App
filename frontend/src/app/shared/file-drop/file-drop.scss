@@ -1,0 +1,76 @@
+﻿.dropzone {
+  border: 2px dashed #b0bec5;
+  border-radius: 6px;
+  padding: 28px 16px;
+  text-align: center;
+  cursor: pointer;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  mat-icon {
+    color: #78909c;
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .hint {
+    color: #607d8b;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+}
+
+.dropzone.drag-over {
+  border-color: #1976d2;
+  background-color: #e3f2fd;
+}
+
+.dropzone.has-file {
+  border-style: solid;
+  border-color: #2e7d32;
+  background-color: rgba(46, 125, 50, 0.05);
+}
+
+.dropzone.has-error {
+  border-color: #c62828;
+  background-color: rgba(198, 40, 40, 0.05);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+
+  .file-name {
+    font-weight: 600;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .file-size {
+    color: #607d8b;
+  }
+
+  .clear-btn {
+    border: none;
+    background: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #c62828;
+    line-height: 1;
+  }
+}
+
+.error-text {
+  color: #c62828;
+  font-size: 0.85rem;
+  margin: 0;
+}
