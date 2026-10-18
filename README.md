@@ -5,7 +5,6 @@ configurable date/amount tolerances, fuzzy description matching, duplicate detec
 results dashboard, and a downloadable PDF report.
 
 Stack: **Angular 22** (frontend) · **FastAPI (Python)** (backend) · **SQLite** (database).
-See [Docs/DEVELOPMENT_PLAN.md](Docs/DEVELOPMENT_PLAN.md) for the full architecture/design writeup.
 
 ## Project layout
 
